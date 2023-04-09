@@ -2,7 +2,8 @@
 - No need to add an app to your workspace
 - Uses Selenium to automate the task, so not very lightweigth
 
-1. Run `main.py`
+0. Run `pip install -r requirements.txt`
+1. Run `python3 main.py`
 2. Log in to Slack
 3. Log in to Spotify
 4. Start playing songs
