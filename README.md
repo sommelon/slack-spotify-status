@@ -1,11 +1,18 @@
-## Display the current song as yout status on Slack
+# Display the current song as yout status on Slack
 - No need to add an app to your workspace
 - Uses Selenium to automate the task, so not very lightweigth
 
-0. Run `pip install -r requirements.txt`
-1. Run `python3 main.py`
+
+## Setup
+1. Run `pip install -r requirements.txt`
+2. Copy contents of `env.example` to `.env`
+3. Create a Spotify app at https://developer.spotify.com/dashboard
+4. Update the variables in `.env`
+
+## Usage
+1. Run `python3 selenium/main.py`
 2. Log in to Slack
-3. Log in to Spotify
+3. Log in to Spotify (a window in your default browser should automatically open)
 4. Start playing songs
 
 
