@@ -53,9 +53,12 @@ def update_status(driver: WebDriver, track: Track):
 
 
 def get_current_track(sp: spotipy.Spotify):
-    current_track = sp.current_playback()
+    try:
+        current_track = sp.current_playback()
+    except Exception:
+        current_track = sp.current_playback()  # retry
 
-    if current_track is not None and 'item' in current_track:
+    if current_track is not None and 'item' in current_track and current_track['is_playing']:
         track_name = current_track['item']['name']
         artist_name = current_track['item']['artists'][0]['name']
         duration = current_track['item']['duration_ms']
@@ -84,6 +87,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIFY_CLIENT_ID,
                                         client_secret=SPOTIFY_CLIENT_SECRET,
                                         redirect_uri="http://localhost:8000",
                                         scope="user-read-playback-state"))
+
 
 with webdriver.Chrome() as driver:
     driver.get('https://slack.com/signin')
