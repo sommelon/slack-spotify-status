@@ -46,11 +46,8 @@ class Actions:
         emoji_picker_input.send_keys(emoji_name)
 
         def is_emoji_first(driver: WebDriver):
-            try:
-                first_emoji = driver.find_element(By.CSS_SELECTOR, f'.p-emoji_picker__list_scroller img:first-of-type')
-                return first_emoji.get_attribute("data-stringify-emoji") == emoji_name
-            except Exception:
-                return
+            first_emoji = driver.find_element(By.CSS_SELECTOR, f'.p-emoji_picker__list_scroller img:first-of-type')
+            return first_emoji.get_attribute("data-stringify-emoji") == emoji_name
         self._wait.until(is_emoji_first)
         emoji_picker_input.send_keys(Keys.RETURN)
 
