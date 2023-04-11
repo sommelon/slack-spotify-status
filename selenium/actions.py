@@ -8,9 +8,9 @@ from selenium.webdriver.common.keys import Keys
 
 
 class Actions:
-    def __init__(self, driver: WebDriver):
+    def __init__(self, driver: WebDriver, wait: WebDriverWait):
         self._driver = driver
-        self._wait = WebDriverWait(self._driver, 10)
+        self._wait = wait
         self._action = ActionChains(self._driver)
 
     def click_avatar(self):

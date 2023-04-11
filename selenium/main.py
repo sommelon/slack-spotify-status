@@ -18,7 +18,7 @@ Track = namedtuple('Track', 'name,artist,duration_ms')
 
 def update_status(driver: WebDriver, track: Track):
     try:
-        actions = Actions(driver)
+        actions = Actions(driver, WebDriverWait(driver, 10))
         actions.escape(3)
         actions.click_avatar()
 
