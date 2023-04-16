@@ -25,7 +25,8 @@ class Actions:
 
     def get_current_status_emoji(self):
         try:
-            self._wait.until(EC.visibility_of_element_located([By.CSS_SELECTOR, '.p-ia__main_menu__custom_status_emoji']))
+            wait = WebDriverWait(self._driver, 1)
+            wait.until(EC.visibility_of_element_located([By.CSS_SELECTOR, '.p-ia__main_menu__custom_status_emoji']))
             emoji = self._driver.find_element(By.CSS_SELECTOR, '.p-ia__main_menu__custom_status_emoji')
             emoji = emoji.get_attribute('data-stringify-emoji')
             self.logger.debug(f'get_current_status_emoji: {emoji=}')
@@ -36,7 +37,8 @@ class Actions:
 
     def get_current_status_text(self):
         try:
-            self._wait.until(EC.visibility_of_element_located([By.CSS_SELECTOR, '.p-ia__main_menu__custom_status_text']))
+            wait = WebDriverWait(self._driver, 2)
+            wait.until(EC.visibility_of_element_located([By.CSS_SELECTOR, '.p-ia__main_menu__custom_status_text']))
             status = self._driver.find_element(By.CSS_SELECTOR, '.p-ia__main_menu__custom_status_text')
             self.logger.debug(f'get_current_status_text: text={status.text}')
             return status.text
