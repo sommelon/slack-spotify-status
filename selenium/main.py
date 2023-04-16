@@ -1,4 +1,5 @@
 from collections import namedtuple
+import logging
 import os
 import time
 from actions import Actions
@@ -8,29 +9,44 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.remote.webdriver import WebDriver
 
+# env vars
 REFRESH_INTERVAL = int(os.getenv('REFRESH_INTERVAL'))
 SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
 SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
+EMOJI = os.getenv('EMOJI')
 DEBUG = bool(os.getenv('DEBUG'))
 
-EMOJI = os.getenv('EMOJI')
+# logging
+logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO)
+selenium_logger = logging.getLogger('selenium')
+selenium_logger.setLevel(logging.WARNING)
+spotipy_logger = logging.getLogger('spotipy')
+spotipy_logger.setLevel(logging.WARNING)
+urllib_logger = logging.getLogger('urllib3')
+urllib_logger.setLevel(logging.WARNING)
+urllib_logger.propagate = False
+logger = logging.getLogger('spotify-slack')
+
+
 Track = namedtuple('Track', 'name,artist,duration_ms')
 
 def update_status(driver: WebDriver, track: Track):
     try:
-        actions = Actions(driver, WebDriverWait(driver, 10))
+        actions = Actions(driver, WebDriverWait(driver, 10), logger)
         actions.escape(3)
         actions.click_avatar()
 
         new_status = track.name + " by " + track.artist if track else None
         if actions.get_current_status_text() == new_status:
+            logger.debug("Status already set")
             return
 
         status_emoji_name = actions.get_current_status_emoji()
         if status_emoji_name is None and track is None:
+            logger.debug("Nothing to update")
             return
         elif status_emoji_name is not None and status_emoji_name != EMOJI:
-            print("Slack status not updated, because it would override a possibly more important status.")
+            logger.info("Slack status not updated, because it would override a possibly more important status.")
             return
 
         status_emoji_name = actions.click_update_status_button()
@@ -38,7 +54,7 @@ def update_status(driver: WebDriver, track: Track):
         if not track:
             actions.click_clear_all_button()
             actions.click_save_button()
-            print("Status cleared.")
+            logger.info("Status cleared.")
             return
 
         actions.click_emoji_picker_button()
@@ -47,9 +63,7 @@ def update_status(driver: WebDriver, track: Track):
         actions.click_choose_date_and_time_option()
         actions.update_status(new_status)
     except Exception as e:
-        if not DEBUG:
-            raise e
-        print(str(e))
+        logger.exception(str(e))
 
 
 def get_current_track(sp: spotipy.Spotify):
@@ -65,7 +79,7 @@ def get_current_track(sp: spotipy.Spotify):
         track = Track(track_name, artist_name, duration)
         return track
     else:
-        print("No song is currently playing on Spotify.")
+        logger.info("No song is currently playing on Spotify.")
 
 def is_slack_workspace_open(driver: WebDriver):
     if len(driver.window_handles) == 1:
