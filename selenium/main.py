@@ -110,11 +110,13 @@ with webdriver.Chrome() as driver:
     wait = WebDriverWait(driver, 120)
     wait.until(is_slack_workspace_open)
 
-
-    track = get_current_track(sp)
-    update_status(driver, track)
-
-    while True:
-        time.sleep(REFRESH_INTERVAL)
+    try:
         track = get_current_track(sp)
         update_status(driver, track)
+
+        while True:
+            time.sleep(REFRESH_INTERVAL)
+            track = get_current_track(sp)
+            update_status(driver, track)
+    except Exception as e:
+        logger.exception(str(e))
