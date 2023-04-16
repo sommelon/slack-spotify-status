@@ -6,8 +6,9 @@ from actions import Actions
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.wait import WebDriverWait, IGNORED_EXCEPTIONS
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.common.exceptions import StaleElementReferenceException
 
 # env vars
 REFRESH_INTERVAL = int(os.getenv('REFRESH_INTERVAL'))
@@ -32,7 +33,8 @@ Track = namedtuple('Track', 'name,artist,duration_ms')
 
 def update_status(driver: WebDriver, track: Track):
     try:
-        actions = Actions(driver, WebDriverWait(driver, 10), logger)
+        wait = WebDriverWait(driver, 10, ignored_exceptions=IGNORED_EXCEPTIONS + (StaleElementReferenceException,))
+        actions = Actions(driver, wait, logger)
         actions.escape(3)
         actions.click_avatar()
 
