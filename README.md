@@ -1,3 +1,9 @@
+# ARCHIVED
+### Development continues here: https://github.com/sommelon/spotify-slack-status
+
+
+
+
 # Display the current song as yout status on Slack
 - No need to add an app to your workspace
 - Uses Selenium to automate the task, so not very lightweigth
